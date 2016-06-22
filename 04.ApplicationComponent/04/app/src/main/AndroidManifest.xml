@@ -14,7 +14,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MemoryGameActivity"></activity>
+
+        <activity android:name=".LottoGameActivity">
+
+        </activity>
+        <activity android:name=".MemoryGameActivity">
+
+        </activity>
     </application>
 
 </manifest>
