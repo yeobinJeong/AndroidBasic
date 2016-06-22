@@ -1,5 +1,6 @@
 package com.androidexample.lab;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 public class LottoGameActivity extends AppCompatActivity {
 
     int[] imageIds = new int[45];
-    Button mSelectButton, mHomeButton;
+    Button mSelectButton, mHomeButton, mNewButton;
     LinearLayout mNumberContainer, mSelectedList;
     TextView[] mNumbers;
 
@@ -23,6 +24,7 @@ public class LottoGameActivity extends AppCompatActivity {
 
         mSelectButton = (Button)findViewById(R.id.select_number_button);
         mHomeButton = (Button)findViewById(R.id.home_button);
+        mNewButton = (Button)findViewById(R.id.new_button);
 
         mNumberContainer = (LinearLayout)findViewById(R.id.number_container);
 
@@ -36,6 +38,14 @@ public class LottoGameActivity extends AppCompatActivity {
             mNumbers[i] = (TextView)mNumberContainer.getChildAt(i);
         }
 
+        mNewButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(LottoGameActivity.this, LottoGameActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
         mSelectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +81,7 @@ public class LottoGameActivity extends AppCompatActivity {
             }
         });
 
-
+        
 
     }
 

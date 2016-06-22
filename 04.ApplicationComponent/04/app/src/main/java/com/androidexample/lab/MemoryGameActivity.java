@@ -1,7 +1,9 @@
 package com.androidexample.lab;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,10 +17,13 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
 public class MemoryGameActivity extends AppCompatActivity {
+
+
 
     //게임 상태를 구분하는 상수 선언
     private final int PRE_START_GAME = 0;
@@ -43,6 +48,7 @@ public class MemoryGameActivity extends AppCompatActivity {
     private HashMap<ImageView, CardItem> mItems = new HashMap<>();
 
     private CardItem mFirstItem, mSecondItem;
+    private GameResult mGameResult = new GameResult();
 
 
 
@@ -62,6 +68,11 @@ public class MemoryGameActivity extends AppCompatActivity {
         mHomeBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+
+                // 인텐트에 데이터를 저장하고 호출한 액티비티로 반환
+                Intent intent = new Intent();
+                intent.putExtra("result", mGameResult);
+                setResult(Activity.RESULT_OK, intent);
 
                 finish();
 
@@ -100,8 +111,13 @@ public class MemoryGameActivity extends AppCompatActivity {
             }
         }
 
-        ///////
+        /////////이전 Activity 에서 넘어온 데이터를 읽기
+        Intent intent = getIntent();
+        String pdata = intent.getStringExtra("data");
+        Date pdate = (Date)intent.getSerializableExtra("data2");
 
+
+        Toast.makeText(this, pdata+"/"+pdate, Toast.LENGTH_LONG).show();
 
 
 
@@ -178,7 +194,7 @@ public class MemoryGameActivity extends AppCompatActivity {
                                     mMatchingCount++;
                                     if (mMatchingCount == mItems.size() / 2) {
                                         stopGame();
-                                        //mGameResult.setSuccess(mGameResult.getSuccess() + 1);
+                                        mGameResult.setSuccess(mGameResult.getSuccess() + 1);
                                         Toast.makeText(getApplicationContext(), "성공!!!", Toast.LENGTH_SHORT).show();
                                     } else {
                                         mStatus = ON_WAITING;
@@ -251,7 +267,8 @@ public class MemoryGameActivity extends AppCompatActivity {
         }, 1500);
     }
 
-    private void stopGame() {
+
+    private void stopGame(){
         mStatus = PRE_START_GAME;
         mMatchingCount = 0;
         mStartBtn.setText("게임 시작");
