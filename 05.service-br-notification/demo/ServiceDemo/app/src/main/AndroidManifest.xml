@@ -18,13 +18,13 @@
             </intent-filter>
         </activity>
 
-        <!--
+
         <service
             android:name=".MyService"
             android:exported="false" >
         </service>
         <activity android:name=".NotificationResultActivity" />
-        -->
+
     </application>
 
 </manifest>
