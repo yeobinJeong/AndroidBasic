@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -73,8 +74,8 @@ public class MyService extends Service {
                         intent2.putExtra("number", (int) (current / 1000));
                         intent2.setAction("com.example.broadcast.MYMESSAGE");
                         sendBroadcast(intent2);
-
-                        sendNotification();
+                        Log.e("MyService", "sendMessage");
+                        //sendNotification();
                     } else {
                         yield();
                     }
