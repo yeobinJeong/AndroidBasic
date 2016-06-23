@@ -3,6 +3,7 @@ package com.androidexample.lab;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,8 +82,45 @@ public class LottoGameActivity extends AppCompatActivity {
             }
         });
 
-        
+
+
 
     }
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.e("lab02", "on-start");
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        Log.e("lab02", "on-resume");
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        Log.e("lab02", "on-stop");
+    }
+
+    @Override
+    protected void onRestart(){
+        super.onRestart();
+        Log.e("lab02", "on-restart");
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.e("lab02", "on-pause");
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        Log.e("lab02", "on-destroy");
+    }
+
 
 }
