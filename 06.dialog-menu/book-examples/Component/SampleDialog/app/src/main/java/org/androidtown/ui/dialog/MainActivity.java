@@ -4,8 +4,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 간단한 알림 대화상자를 만들어 보여주는 방법을 볼 수 있습니다.
@@ -22,8 +26,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        textView1 = (TextView) findViewById(R.id.textView1);
 
+
+        textView1 = (TextView) findViewById(R.id.textView1);
+        //지정된 요소를 LongClick 하면 상황에 맞는 메뉴를 표시
+        registerForContextMenu(textView1);
     }
 
     /**
@@ -202,6 +209,38 @@ public class MainActivity extends AppCompatActivity {
         return dialog;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+     /*   MenuItem mi = menu.add(Menu.NONE, 1, 1, "아이콘 메뉴");
+
+        mi.setIcon(R.mipmap.ic_launcher);
+        mi.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
 
+        menu.add(Menu.NONE, 1, 1, "메뉴 1");
+        menu.add(Menu.NONE, 1, 1, "메뉴 2");
+        menu.add(Menu.NONE, 1, 1, "메뉴 3");
+        menu.add(Menu.NONE, 1, 1, "메뉴 4");*/
+
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+
+        Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+        return super.onOptionsItemSelected(item);
+
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu cmenu, View v, ContextMenu.ContextMenuInfo cmenui){
+
+        getMenuInflater().inflate(R.menu.menu_main, cmenu);
+        super.onCreateContextMenu(cmenu, v, cmenui);
+    }
 }
