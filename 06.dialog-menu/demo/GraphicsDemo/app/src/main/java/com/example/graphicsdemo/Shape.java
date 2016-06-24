@@ -118,6 +118,7 @@ public class Shape {
 
     private void setRect(RectF rect) {
         rect.set(
+                // 작은X와 작은Y를 Left top 큰 X와 큰 Y를 Right bottom 으로 설정하기위한 set
             points.get(0).x < points.get(1).x ? points.get(0).x : points.get(1).x,
             points.get(0).y < points.get(1).y ? points.get(0).y : points.get(1).y,
             points.get(0).x > points.get(1).x ? points.get(0).x : points.get(1).x,
