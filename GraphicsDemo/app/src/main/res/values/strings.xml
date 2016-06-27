@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">GraphicsDemo</string>
+
+    <string name="fill_color_title">면색상</string>
+    <string name="line_color_title">선색상</string>
+    <string name="shape_type_title">도형종류</string>
+    <string name="line_thickness_title">선두께</string>
+
+</resources>

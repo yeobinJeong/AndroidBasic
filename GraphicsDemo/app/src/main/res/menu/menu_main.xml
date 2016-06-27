@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    
+    <item android:id="@+id/select_line_color"
+        android:title="@string/line_color_title"
+        android:icon="@drawable/line_color"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/select_fill_color"
+        android:title="@string/fill_color_title"
+        android:icon="@drawable/fill_color"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/select_shape_type"
+        android:title="@string/shape_type_title"
+        android:icon="@drawable/shape_type"
+        app:showAsAction="never" />
+
+    <item android:id="@+id/select_line_thickness"
+        android:title="@string/line_thickness_title"
+        android:icon="@drawable/line_thickness"
+        app:showAsAction="never" />
+
+</menu>
