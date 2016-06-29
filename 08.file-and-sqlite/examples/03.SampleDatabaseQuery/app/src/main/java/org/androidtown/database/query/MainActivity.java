@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         String SQL = "select name, age, phone "
                 + " from " + TABLE_NAME
                 + " where age > ?";
-        String[] args= {"30"};
+        String[] args= {"15"};
 
         Cursor c1 = db.rawQuery(SQL, args);
         int recordCount = c1.getCount();
