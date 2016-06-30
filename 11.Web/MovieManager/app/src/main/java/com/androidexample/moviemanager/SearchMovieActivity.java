@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -66,6 +67,7 @@ public class SearchMovieActivity extends AppCompatActivity {
                     public void run() {
                         try {
                             String searchText = mSearchText.getText().toString();
+                            searchText = URLEncoder.encode(searchText, "utf-8");
                             String sUrl = String.format(REQUEST_URL, API_KEY, searchText);
                             URL url = new URL(sUrl);
                             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
@@ -84,23 +86,21 @@ public class SearchMovieActivity extends AppCompatActivity {
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
+            public void onItemClick(
+                    AdapterView<?> parent, View view, int position, long id) {
                 Movie movie = movies.get(position);
-
                 String url = movie.getLink();
-
-                if(url != null && url.length() >0){
+                if (url != null && url.length() > 0) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
-
-                }else{
-                    Toast.makeText(SearchMovieActivity.this, "관련 사이트가 존재하지 않습니다", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(SearchMovieActivity.this,
+                            "관련 사이트가 존재하지 않습니다.", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-    } // end of onCreate
+
+    } //end of onCreate
 
     private void processResult(HttpURLConnection conn) throws IOException {
         BufferedReader breader = new BufferedReader(
@@ -120,8 +120,6 @@ public class SearchMovieActivity extends AppCompatActivity {
             }
         });
     }
-
-
 
     private void processResult2(HttpURLConnection conn) throws IOException {
         InputStream istream = conn.getInputStream();

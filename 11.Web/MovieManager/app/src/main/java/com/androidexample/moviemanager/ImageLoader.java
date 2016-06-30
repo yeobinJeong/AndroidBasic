@@ -16,16 +16,21 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Stack;
 
+//Cache 사용 기능 제공 (Memory Cache, SD Card Cache)
+//Lazy Loading 방식 사용 (처음에는 임시 이미지 사용 -> 다운로드 끝나면 이미지 교체)
 public class ImageLoader {
 
+    private Context context;
+
+    //Memory Cache로 사용할 Map 객체
     private HashMap<String, Bitmap> cache = new HashMap<String, Bitmap>();
 
+    //File Cache 경로 (SD Card 사용)
     private File cacheDir;
 
     public ImageLoader(Context context) {
-
-
-        //image 다운로드를 처리하는 작업 쓰레드의 우선순위 결정 (낮게)
+        this.context = context;
+        //Image 다운로드를 처리하는 작업 쓰레드의 우선 순위 설정 (낮게)
         photoLoaderThread.setPriority(Thread.NORM_PRIORITY - 1);
 
         cacheDir = new File(android.os.Environment.getExternalStorageDirectory(), "lazy-list");
@@ -34,18 +39,20 @@ public class ImageLoader {
             cacheDir.mkdirs();//SD 카드에 만들어짐.//2번째 방법
     }
 
+    //임시 이미지 리소스 아이디 (실제 이미지가 다운로드 되기 전에 사용할 이미지)
     final int stub_id = R.mipmap.ic_launcher;
-    /*
-    *
-    * @param url 이미지경로
-    * @param activity 실행 중인 액티비티
-    * @param imageView 이미지가 표시될 (적용될 위젯)
-    *
-    * */
+
+    /************************************************
+     * 외부에서 호출될 이미지 다운로드 명령 메서드
+     * @param url 이미지 경로
+     * @param activity 실행 중인 액티비티
+     * @param imageView 이미지가 표시될 (적용될) 위젯
+     ***********************************************/
     public void displayImage(String url, Activity activity, ImageView imageView) {
-        if (url == null || url.length() == 0) {
-            imageView.setImageResource(stub_id);
-            return;
+
+        if (url == null || url.length() == 0) {//이미지 경로가 존재하지 않는 경우
+            imageView.setImageResource(stub_id);//임시 이미지 설정
+            return;//작업 종료
         }
 
         if (cache.containsKey(url))//memory cache에서 파일 찾기
@@ -91,7 +98,7 @@ public class ImageLoader {
             OutputStream os = new FileOutputStream(f);
             Utils.CopyStream(is, os);//파일 캐시에 파일 저장
             os.close();
-            bitmap = decodeFile(f);//최적화된 이미지 파일 반환
+            bitmap = decodeFile(f); //최적화된 이미지 파일 반환
             return bitmap;
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -102,7 +109,7 @@ public class ImageLoader {
     //파일 최적화 작업 수행
     private Bitmap decodeFile(File f) {
         try {
-            //이미지 크기 분석
+            //이미지 크기 분석 (이미지를 메모리에 로딩하지 않고 분석)
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
@@ -166,7 +173,7 @@ public class ImageLoader {
                     //현재 큐에 처리할 작업이 없으면 쉬는 시간 (깨울 때까지 잠자기)
                     if (photosQueue.photosToLoad.size() == 0) {
                         synchronized (photosQueue.photosToLoad) {
-                            photosQueue.photosToLoad.wait();
+                            photosQueue.photosToLoad.wait();//notify 호출에 의해 재동작
                         }
                     } else {
                         PhotoToLoad photoToLoad;
@@ -183,7 +190,8 @@ public class ImageLoader {
                         Object tag = photoToLoad.imageView.getTag();
                         if (tag != null && ((String) tag).equals(photoToLoad.url)) {
                             BitmapDisplayer bd = new BitmapDisplayer(bmp, photoToLoad.imageView);
-                            Activity a = (Activity) photoToLoad.imageView.getContext();
+                            //Activity a = (Activity) photoToLoad.imageView.getContext();
+                            Activity a = (Activity)context;
                             a.runOnUiThread(bd);//UI 쓰레드에서 작업 실행
                         }
                     }
