@@ -31,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case 1 :
                 //이미지 검색 화면으로 이동
+
+                /*intent = new Intent(this, ImageLoader.class);*/
                 break;
         }
 
