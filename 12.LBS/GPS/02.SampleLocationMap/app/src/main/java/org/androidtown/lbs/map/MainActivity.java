@@ -22,6 +22,8 @@ import com.google.android.gms.maps.model.LatLng;
 public class MainActivity extends AppCompatActivity {
 
     private GoogleMap map;
+    private LocationManager manager;
+    private GPSListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +43,12 @@ public class MainActivity extends AppCompatActivity {
         // 위치 확인하여 위치 표시 시작
         startLocationService();
 
+        manager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        listener = new GPSListener();
+
         //checkDangerousPermissions();
     }
+
 
     private void checkDangerousPermissions() {
         String[] permissions = {
@@ -86,12 +92,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        //pause 상태일때 위치정보 수신을 중단함
+        manager.removeUpdates(listener);
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+
+    }
+
     private void startLocationService() {
         // 위치 관리자 객체 참조
-        LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         // 리스너 객체 생성
-        GPSListener gpsListener = new GPSListener();
+        /*GPSListener gpsListener = new GPSListener();*/
         long minTime = 10000;
         float minDistance = 0;
 
@@ -99,9 +120,9 @@ public class MainActivity extends AppCompatActivity {
             // GPS 기반 위치 요청
             manager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER,
-                    minTime,
-                    minDistance,
-                    gpsListener);
+                    minTime,//이시간 단위로 재수신
+                    minDistance, // 이거리 이상 움직여야 GPS 정보를 재수신
+                    listener);
 
             // 네트워크 기반 위치 요청
 //            manager.requestLocationUpdates(
