@@ -1,0 +1,158 @@
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		super.onCreateOptionsMenu(menu);
+		
+		menu.add(0, 1, 0, "장소검색");
+		menu.add(0, 2, 0, "지원하지 않는 메뉴");
+		menu.add(0, 3, 0, "지원하지 않는 메뉴");
+		
+		return true;
+	}
+	
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+	
+		super.onMenuItemSelected(featureId, item);
+		
+		switch (item.getItemId()) {
+		case 1 : 
+			searchLocation();
+			break;
+		case 2 : break;
+		case 3 : break;		
+		}
+		
+		return true;
+	}
+	
+	private void searchLocation() {
+		
+		final EditText input = new EditText(this);
+		new AlertDialog.Builder(this)
+		.setTitle("장소를 입력하세요")		
+		.setIcon(getResources().getDrawable(R.drawable.icon))		
+		.setView(input)		
+		.setPositiveButton("검색",
+			new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int which) {
+					// TODO Auto-generated method stub
+					String data = input.getText().toString();					
+					List<ThePoint> points = 
+						getLocations(data);
+					if (points != null && points.size() > 0)
+						showLocations(points);
+					else
+						Toast.makeText(LocationSearchActivity.this, 
+							"검색된 장소가 없습니다.", Toast.LENGTH_LONG).show();
+				}
+			})
+		.setNegativeButton("취소", null)
+		.show();
+	}
+	
+	private List<ThePoint> getLocations(String data) {
+		
+		ArrayList<ThePoint> points = new ArrayList<ThePoint>();
+		
+		try {
+			String encodedData = URLEncoder.encode(data, "utf-8");
+			String path = 
+					String.format("http://openapi.naver.com/search?key=bf0d3a53c020bdcb5ae4620d2c7ed896&query=%s&target=local&start=1&display=10", 
+							encodedData);
+	
+			HttpGet httpGet = new HttpGet(path);
+	
+			DefaultHttpClient client = new DefaultHttpClient();        
+	
+			HttpResponse res = client.execute(httpGet);
+			InputStream istream = res.getEntity().getContent();
+	
+			DocumentBuilderFactory factory = 
+			DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = 
+			factory.newDocumentBuilder();
+			Document doc = builder.parse(istream);
+			istream.close();
+	
+			NodeList items = doc.getElementsByTagName("item");
+			
+			
+			for (int i = 0; i < items.getLength(); i++) {
+				Node item = items.item(i);
+				ThePoint point = new ThePoint();
+				//String title =
+				point.setTitle(
+					item.getFirstChild().getFirstChild().getNodeValue());
+				Element link = (Element)item.getChildNodes().item(1);
+				if (link.hasChildNodes() && link.getFirstChild().getNodeValue().length() > 0)
+					point.setLink(link.getFirstChild().getNodeValue());
+				//int x =
+				point.setX(
+					Integer.parseInt(
+					item.getChildNodes().item(5).getFirstChild().getNodeValue())
+					);			        			
+				//int y =
+				point.setY(
+					Integer.parseInt(
+					item.getChildNodes().item(6).getFirstChild().getNodeValue())
+					);
+				
+				GeoPoint pt = 
+					getWGS84FromKTM(point.getX(), point.getY());
+				
+				if (pt != null) {
+					point.setLatitude(pt.getLatitudeE6());
+					point.setLongitude(pt.getLongitudeE6());
+				}
+				
+				points.add(point);
+			}
+		} catch (Exception ex) {
+			Log.e("search", ex.getMessage());
+		}
+		
+		return points;
+	}
+	
+	private GeoPoint getWGS84FromKTM(int x, int y) {
+		GeoPoint point = null;
+		
+		try {
+			String path = String.format(
+				"http://apis.daum.net/maps/transcoord?apikey=73248eefbf298d60250361436f0aa81c&x=%d&y=%d&fromCoord=KTM&toCoord=WGS84&out=xml",
+				x, y);
+			HttpGet httpGet = new HttpGet(path);
+
+			DefaultHttpClient client = new DefaultHttpClient();
+
+			HttpResponse response = client.execute(httpGet);
+
+			InputStream istream = 
+				response.getEntity().getContent();
+
+			DocumentBuilderFactory factory = 
+			DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = 
+				factory.newDocumentBuilder();
+
+			Document doc = builder.parse(istream);
+			istream.close();
+			double longitude = 
+				Double.parseDouble(
+					doc.getDocumentElement().getAttribute("x"));
+			double latitude = 
+				Double.parseDouble(
+					doc.getDocumentElement().getAttribute("y"));
+			
+			point = new GeoPoint(
+				(int)(latitude * 1000000), 
+				(int)(longitude * 1000000));
+			
+		} catch (Exception ex) {
+			Log.e("convert", ex.getMessage());
+		}
+		
+		return point;
+	}
