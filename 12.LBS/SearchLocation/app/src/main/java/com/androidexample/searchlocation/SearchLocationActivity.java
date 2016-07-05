@@ -16,6 +16,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -123,11 +124,13 @@ public class SearchLocationActivity extends AppCompatActivity {
     }
 
     private void showLocations(List<ThePoint> locations){
+        map.clear();
+
         //첫 번째 검색 결과의 중심으로 이동랙
         ThePoint location = locations.get(0);
 
 
-        LatLng latLng = new LatLng(location.getX(), location.getY());
+        LatLng latLng = new LatLng(location.getY(), location.getX());
         map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
 
@@ -135,11 +138,11 @@ public class SearchLocationActivity extends AppCompatActivity {
         for(ThePoint l : locations){
             MarkerOptions options = new MarkerOptions();
 
-            options.icon(null);
+            options.icon(BitmapDescriptorFactory.fromResource(R.drawable.location));
             options.title(l.getTitle());
             options.snippet(l.getDescription());
 
-            options.position(new LatLng(l.getX(), l.getY()));
+            options.position(new LatLng(l.getY(), l.getX()));
             //map에 Maker추가
             map.addMarker(options);
         }

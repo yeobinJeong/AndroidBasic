@@ -1,0 +1,38 @@
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.Gson;
+
+@WebServlet("/get-request.action")
+public class HandlerA extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+	
+		System.out.println(req.getParameter("name"));
+		System.out.println(req.getParameter("phone"));
+		
+		resp.setContentType("text/plain");//응답 컨텐츠의 종류
+		
+		
+		Gson gson = new Gson();
+		
+		String json = gson.toJson(Person);
+		PrintWriter writer = resp.getWriter();
+		writer.println("Hello, Android Client !!!");
+		
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+	
+}

@@ -1,0 +1,33 @@
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+@WebServlet("/post-request.action")
+public class HandlerB extends HttpServlet {
+
+	@Override
+	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		
+		System.out.println(req.getParameter("name"));
+		
+		String name = req.getParameter("name");
+		System.out.println(req.getParameter("phone"));
+		
+		resp.setContentType("text/plain;charset=utf-8");//응답 컨텐츠의 종류
+		
+		PrintWriter writer = resp.getWriter();
+		writer.println(name+ "Hello, Android Client from Handler B!!!");
+		
+	}
+	
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		doGet(req, resp);
+	}
+	
+}
